@@ -1,4 +1,4 @@
-import { EMPTY, forkJoin, from, fromEvent, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, from, fromEvent, Observable, of} from 'rxjs';
 import { ajax } from "rxjs/ajax";
 import { catchError, concatMap, map } from 'rxjs/dist/types/operators';
 
@@ -113,7 +113,7 @@ of('food')
   .subscribe((value) => console.log(value));
 
   // Flatenning operator - error handling - 2st Approach
-  // in 1 st approach, without using a catchError, will receive error in error //// block
+  // in 1 st approach, without using a catchError, will receive error //// in error  block, EMPTY will complete the outer observable
   of('food') // something-incorrect
   .pipe(  
   map((value) => value),

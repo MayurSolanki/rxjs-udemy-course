@@ -113,7 +113,7 @@ of('food')
   .subscribe((value) => console.log(value));
 
   // Flatenning operator - error handling - 2st Approach
-  // in 1 st approach, without using a catchError, will receive error in error block
+  // in 1 st approach, without using a catchError, will receive error in error //// block
   of('food') // something-incorrect
   .pipe(  
   map((value) => value),
@@ -126,3 +126,21 @@ of('food')
     error: err => console.log('Error:', err),
     complete: () => console.log('Completed')
   });
+
+  // Flatenning operator - error handling - 3rd Approach
+  // without breaking a outer subscription handle error
+
+  of('food') // something-incorrect
+  .pipe(  
+  map((value) => value),
+    concatMap(value =>
+      ajax(`https://random-data-api.com/api/${value}/random_${value}`).pipe(
+        catchError(error => of(`Could not fetch data: ${error}`))
+      )
+    )
+  ).subscribe({
+    next: value => console.log(value),
+    error: err => console.log('Error:', err),
+    complete: () => console.log('Completed')
+  });
+  

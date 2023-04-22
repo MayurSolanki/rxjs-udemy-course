@@ -1,5 +1,6 @@
-import { forkJoin, from, fromEvent, Observable, of } from 'rxjs';
+import { EMPTY, forkJoin, from, fromEvent, Observable, of } from 'rxjs';
 import { ajax } from "rxjs/ajax";
+import { catchError, concatMap, map } from 'rxjs/dist/types/operators';
 
 
 /*const interval$ = new Observable<number>(subscriber => {
@@ -37,8 +38,6 @@ from(['Alice', 'Bob', 'Charlie']).subscribe({
 });
 
 // convert promise to observable using the from 
-
-
 const somePromise = new Promise((resolve, reject) => {
   // resolve('Resolved!');
   reject('Rejected!');
@@ -100,3 +99,30 @@ const randomFood$ = ajax('https://random-data-api.com/api/food/random_food');
 forkJoin([randomName$, randomNation$, randomFood$]).subscribe(
   ([nameAjax, nationAjax, foodAjax]) => console.log(`${nameAjax.response.first_name} is from ${nationAjax.response.capital} and likes to eat ${foodAjax.response.dish}.`)
 );
+
+
+// concatMap flattening operator example
+
+of('food')
+  .pipe(
+    map((value) => value),
+    concatMap(value =>
+      ajax(`https://random-data-api.com/api/${value}/random_${value}`)
+    )
+  )
+  .subscribe((value) => console.log(value));
+
+  // Flatenning operator - error handling - 2st Approach
+  // in 1 st approach, without using a catchError, will receive error in error block
+  of('food') // something-incorrect
+  .pipe(  
+  map((value) => value),
+    concatMap(value =>
+      ajax(`https://random-data-api.com/api/${value}/random_${value}`)
+    ),
+    catchError(() => EMPTY)
+  ).subscribe({
+    next: value => console.log(value),
+    error: err => console.log('Error:', err),
+    complete: () => console.log('Completed')
+  });

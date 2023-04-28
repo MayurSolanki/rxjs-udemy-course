@@ -1,6 +1,5 @@
-import { EMPTY, forkJoin, from, fromEvent, Observable, of} from 'rxjs';
+import { EMPTY, forkJoin, from, fromEvent, Observable, of, catchError, concatMap, map, filter} from 'rxjs';
 import { ajax } from "rxjs/ajax";
-import { catchError, concatMap, map } from 'rxjs/dist/types/operators';
 
 
 /*const interval$ = new Observable<number>(subscriber => {
@@ -112,8 +111,8 @@ of('food')
   )
   .subscribe((value) => console.log(value));
 
-  // Flatenning operator - error handling - 2st Approach
-  // in 1 st approach, without using a catchError, will receive error //// in error  block, EMPTY will complete the outer observable
+// Flatenning operator - error handling - 2st Approach
+// in 1 st approach, without using a catchError, will receive error //// in error  block, EMPTY will complete the outer observable
   of('food') // something-incorrect
   .pipe(  
   map((value) => value),
@@ -127,8 +126,8 @@ of('food')
     complete: () => console.log('Completed')
   });
 
-  // Flatenning operator - error handling - 3rd Approach
-  // without breaking a outer subscription handle error
+// Flatenning operator - error handling - 3rd Approach
+// without breaking a outer subscription handle error
 
   of('food') // something-incorrect
   .pipe(  
@@ -144,7 +143,8 @@ of('food')
     complete: () => console.log('Completed')
   });
   
-  // Filter opearator - 
+// Filter opearator - 
+
   interface NewsItem {
     category: 'Business' | 'Sports';
     content: string;
@@ -171,7 +171,7 @@ of('food')
     item => console.log(item)
   );
 
-  // Map operator
+// Map operator
   const randomFirstName$ = ajax<any>('https://random-data-api.com/api/name/random_name').pipe(
   map(ajaxResponse => ajaxResponse.response.first_name)
 );
@@ -188,3 +188,7 @@ forkJoin([randomFirstName$, randomCapital$, randomDish$]).subscribe(
   ([firstName, capital, dish]) =>
     console.log(`${firstName} is from ${capital} and likes to eat ${dish}.`)
 );
+
+// ExhaustMap waits for the inner observable to finish
+// Add outer observable value in queue until inner observable Finished
+

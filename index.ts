@@ -225,10 +225,18 @@ users.pipe(
    }
   ),
   // mergeAll(),
-  delay(1000),
-  tap(tapData => console.log('tap',tapData))
+ // delay(5000),
+ 
+  map(value => value.centerName), //
+  concatMap(value =>
+    //https://dummyjson.com/products/search?q=Laptop
+    ajax(`https://dummyjson.com/products/search?q=${value}`).pipe(
+      catchError(error => of(`Could not fetch data: ${error}`))
+    )
+  ),
+  tap(tapData => console.log('tapData',tapData)),
 ).subscribe({
   next: (data) => console.log('response....',data),
-  error: (error) => console.log('error',error),
+  error: (error) => console.log('error...',error),
   complete: () => console.log('completed....')
 })

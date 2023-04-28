@@ -1,4 +1,4 @@
-import { EMPTY, forkJoin, from, fromEvent, Observable, of, catchError, concatMap, map, filter} from 'rxjs';
+import { EMPTY, forkJoin, from, fromEvent, Observable, of, catchError, concatMap, map, filter, tap, mergeAll, mergeMap, delay} from 'rxjs';
 import { ajax } from "rxjs/ajax";
 
 
@@ -168,7 +168,7 @@ of('food')
   );
   
   newsFeed$.subscribe(
-    item => console.log(item)
+   // item => console.log(item)
   );
 
 // Map operator
@@ -192,3 +192,43 @@ forkJoin([randomFirstName$, randomCapital$, randomDish$]).subscribe(
 // ExhaustMap waits for the inner observable to finish
 // Add outer observable value in queue until inner observable Finished
 
+
+
+// practice
+
+const users = ajax({
+     url: 'https://devapis.delcaper.com/fulfillment/cod-center/nearby',
+     method: 'POST',
+    headers: {
+       'Content-Type': 'application/json',
+      //'rxjs-custom-header': 'Rxjs'
+     },
+    body: {
+      "city": "Ahmedabad",
+      "latitude": 23.0022242,
+      "longitude": 72.5020437
+    }
+  })
+//   .pipe(
+//    map(response => console.log('response: ', response)),
+//      catchError(error => {
+//       console.log('error: ', error);
+//        return of(error);
+//    })
+//  );
+
+users.pipe(
+   mergeMap(info =>  {
+    const resultArr =  info.response.data
+    console.log('resultArr',resultArr);
+    return from(resultArr)
+   }
+  ),
+  // mergeAll(),
+  delay(1000),
+  tap(tapData => console.log('tap',tapData))
+).subscribe({
+  next: (data) => console.log('response....',data),
+  error: (error) => console.log('error',error),
+  complete: () => console.log('completed....')
+})
